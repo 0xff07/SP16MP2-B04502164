@@ -3,9 +3,12 @@
 #include<dirent.h>
 #include<stdlib.h>
 #include<string.h>
+#include<sys/stat.h>
 #define HOMEWORK ON
 
 char cur_name[10000];
+const char* src = "server/";
+const char* dst = "client/";
 
 void tras_folder(DIR *dir, char *cur_path)
 {
@@ -26,6 +29,17 @@ void tras_folder(DIR *dir, char *cur_path)
 		if(cur_file->d_type == DT_DIR && strcmp(file_name, ".") && strcmp(file_name, "..")){
 			strcat(cur_path, cur_file->d_name);
 			strcat(cur_path, "/");
+
+			char copy_path[10000] = {0};
+			strcat(copy_path, dst);
+			strcat(copy_path, &cur_path[strlen(src)]);
+
+			//printf("to be copied : %s\n", copy_path);
+			if(mkdir(copy_path, ACCESSPERMS) == -1){
+				perror("failed to copy foldir\n");
+				exit(1);
+			}
+
 			DIR *next_folder = opendir(cur_path);
 			if(!next_folder){
 				perror("failed when opendir() next folder in tras_folder\n");
@@ -40,13 +54,17 @@ void tras_folder(DIR *dir, char *cur_path)
 int main(int argc, char **argv)
 {
 
+	/*
 	if(argc != 2){
 		printf("./trasverse_folder <folder_path>\n");
 		exit(0);
 	}
+	*/
+
+
 	char path[100000];
-	strcpy(path, argv[1]);
-	int path_len = strlen(argv[1]);
+	strcpy(path, src);
+	int path_len = strlen(src);
 	if(path[path_len - 1] != '/')
 		strcat(path, "/");
 	path_len++;

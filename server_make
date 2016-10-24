@@ -1,0 +1,7 @@
+#! /bin/bash
+mkdir server
+mkdir server/this
+mkdir server/this/is
+mkdir server/this/is/a
+mkdir server/this/is/a/folder
+mkdir server/this/is/another_folder

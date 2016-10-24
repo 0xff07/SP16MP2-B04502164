@@ -1,0 +1,8 @@
+#! /bin/bash
+tree server
+make clean
+rm -r client
+mkdir client
+make
+./tree_walk
+tree client

@@ -1,0 +1,4 @@
+#! /bash/bin
+make clean
+rm -r client
+rm -r server
