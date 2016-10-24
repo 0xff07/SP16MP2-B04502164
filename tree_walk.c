@@ -11,7 +11,7 @@ char cur_name[10000];
 const char* src = "server/";
 const char* dst = "client/";
 
-cp(char *from, char *to)
+void cp(char *from, char *to)
 {
 	FILE *dst = fopen(to, "wb");
 	if(!dst){
@@ -33,7 +33,6 @@ cp(char *from, char *to)
 	
 	fclose(dst);
 	fclose(src);
-
 }
 
 
@@ -52,16 +51,17 @@ void tras_folder(DIR *dir, char *cur_path)
 	
 		printf("%s", cur_path);
 		printf("%s\n", file_name);
+		strcat(cur_path, cur_file->d_name);
+		//strcat(cur_path, "/");
 
-		if(cur_file->d_type == DT_DIR && strcmp(file_name, ".") && strcmp(file_name, "..")){
-			strcat(cur_path, cur_file->d_name);
+		char copy_path[10000] = {0};
+		strcat(copy_path, dst);
+		strcat(copy_path, &cur_path[strlen(src)]);
+
+		//printf("to be copied : %s\n", copy_path);
+
+		if(cur_file->d_type == DT_DIR){
 			strcat(cur_path, "/");
-
-			char copy_path[10000] = {0};
-			strcat(copy_path, dst);
-			strcat(copy_path, &cur_path[strlen(src)]);
-
-			//printf("to be copied : %s\n", copy_path);
 			if(mkdir(copy_path, ACCESSPERMS) == -1){
 				perror("failed to copy foldir\n");
 				exit(1);
@@ -73,7 +73,12 @@ void tras_folder(DIR *dir, char *cur_path)
 				exit(1);
 			}
 			tras_folder(next_folder, cur_path);
-		}
+
+		}else if(cur_file -> d_type == DT_LNK){
+			/* fill how to handle symbolic link here */	
+		}else
+			cp(cur_path, copy_path);
+		
 		cur_path[cur_path_len] = '\0';
 	}
 }
